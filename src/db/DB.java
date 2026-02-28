@@ -8,37 +8,41 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DB {
-	public static Connection conn = null;
-	
-	public static Connection getConnection() {
-		Properties prop = loadProperties();
-		String url = prop.getProperty("dburl");
-		
-		try {
-			conn = DriverManager.getConnection(url,prop);
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao carregar db.properties", e);
-		}
-		return conn;
-		
-	}
-	
-	public static void closeConnection() {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	private static Properties loadProperties() {
-	try(FileInputStream fis = new FileInputStream("db.properties")){
-		Properties prop = new Properties();
-		prop.load(fis);
-		
-		return prop;
-	} 
-	catch (IOException e) {
-		throw new RuntimeException("Erro ao carregar db.properties", e);
-	}}}
+
+    private static Connection conn = null;
+
+    public static Connection getConnection() {
+        try {
+            if (conn == null || conn.isClosed()) {
+                Properties props = loadProperties();
+                String url = props.getProperty("dburl");
+                conn = DriverManager.getConnection(url, props);
+            }
+            return conn;
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
+
+    public static void closeConnection() {
+        if (conn != null) {
+            try {
+                if (!conn.isClosed()) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                throw new DbException(e.getMessage());
+            }
+        }
+    }
+
+    private static Properties loadProperties() {
+        try (FileInputStream fs = new FileInputStream("db.properties")) {
+            Properties props = new Properties();
+            props.load(fs);
+            return props;
+        } catch (IOException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
+}
