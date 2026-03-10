@@ -1,30 +1,40 @@
 package application;
 
-import interfaces.SellerDAO;
-
-import java.time.LocalDate;
 import java.util.List;
 
 import dao.FactoryDAO;
 import entities.Department;
-import entities.Seller;
+import interfaces.DepartmentDAO;
 
-public class Program {
+public class ProgramDepartment {
 
-	public static void main(String[] args) {
-		SellerDAO selldao= FactoryDAO.createSellerDAO();
-		Seller sell = new Seller(null, "jao", "jao@gmail", LocalDate.of(2003, 10, 2), 2000.30, new Department(1, "pc"));
-		selldao.insert(sell);
-		List<Seller> sl = selldao.findAll();
-		for(Seller s : sl) {
-			System.out.printf("id:%d nome:%s email:%s, Data de nascimento%s, Salario%.2f, Departamento%s \n",
-			s.getId(),
-			s.getName(),
-		    s.getEmail(),
-		    s.getBirthDate(),
-		    s.getBaseSalary(),
-		    s.getDepartment().getName());
-			
-		}
-	}
+    public static void main(String[] args) {
+
+        DepartmentDAO depDao = FactoryDAO.createDepartmentDAO();
+
+        // INSERT 
+        Department newDep = new Department(null, "Games");
+        depDao.insert(newDep);
+        System.out.println("Inserido! Novo id = " + newDep.getId());
+
+        // UPDATE
+        newDep.setName("Game Development");
+        depDao.update(newDep);
+        System.out.println("Atualizado!");
+
+        // FIND BY ID
+        Department dep = depDao.findById(newDep.getId());
+        System.out.println("Encontrado: " + dep);
+
+        // FIND ALL
+        List<Department> list = depDao.findAll();
+        System.out.println("\nLista de departamentos:");
+        for (Department d : list) {
+            System.out.println(d);
+        }
+
+        // DELETE
+        depDao.deleteById(newDep.getId());
+        System.out.println("Departamento deletado!");
+    }
 }
