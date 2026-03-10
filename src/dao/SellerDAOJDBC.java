@@ -42,7 +42,7 @@ public class SellerDAOJDBC implements SellerDAO {
 	private Department instantiateDepartment(ResultSet rs) {
 		try {
 			Department dep = new Department();
-			dep.setId(rs.getInt("Department_id"));
+			dep.setId(rs.getInt("department_id"));
 			dep.setName(rs.getString("DepName"));
 
 			return dep;
@@ -145,3 +145,4 @@ public class SellerDAOJDBC implements SellerDAO {
 		}
 	}
 }
+
